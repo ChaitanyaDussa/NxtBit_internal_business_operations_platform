@@ -1,0 +1,8 @@
+{
+  "name": "nxtbiz",
+  "private": true,
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "build": "npm --prefix server run build && npm --prefix client run build"
+  }
+}

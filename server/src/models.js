@@ -1,0 +1,16 @@
+import mongoose from 'mongoose';
+const { Schema, model } = mongoose;
+const base = { timestamps: true };
+export const User = model('User', new Schema({ name:String, email:{type:String,unique:true,lowercase:true}, passwordHash:String, role:{type:String,enum:['Admin','Manager','Employee','Viewer'],default:'Employee'}, refreshTokenHash:String, active:{type:Boolean,default:true}, lastLoginAt:Date }, base));
+export const Customer = model('Customer', new Schema({ name:{type:String,required:true}, email:String, phone:String, company:String, tags:[String], notes:String, preferences:String, healthScore:{type:Number,default:75} }, base));
+export const Email = model('Email', new Schema({ subject:String, body:String, sender:String, customerId:{type:Schema.Types.ObjectId,ref:'Customer'}, sentiment:String, intent:String, urgency:String, confidence:Number, autoResponse:String, recommendations:[String], processed:{type:Boolean,default:false} }, base));
+export const Meeting = model('Meeting', new Schema({ title:String, attendees:[String], startTime:Date, endTime:Date, notes:String, status:{type:String,default:'scheduled'}, customerId:{type:Schema.Types.ObjectId,ref:'Customer'} },base));
+export const Invoice = model('Invoice', new Schema({ customerId:{type:Schema.Types.ObjectId,ref:'Customer'}, amount:Number, dueDate:Date, status:{type:String,default:'draft'}, pdfUrl:String, lineItems:[{description:String,amount:Number}] },base));
+export const Ticket = model('Ticket', new Schema({ customerId:{type:Schema.Types.ObjectId,ref:'Customer'}, priority:{type:String,default:'medium'}, issue:String, status:{type:String,default:'open'}, assignedTo:{type:Schema.Types.ObjectId,ref:'User'}, resolution:String },base));
+export const Report = model('Report', new Schema({ type:String,title:String,metrics:[{label:String,value:String}],recommendations:[String],summary:String,pdfUrl:String,generatedBy:{type:Schema.Types.ObjectId,ref:'User'} },base));
+export const Agent = model('Agent', new Schema({agentId:{type:String,unique:true},name:String,status:{type:String,default:'ready'},lastExecution:Date,logs:[String],capabilities:[String]},base));
+export const AgentExecution = model('AgentExecution', new Schema({agentId:String,eventId:String,status:String,input:Schema.Types.Mixed,output:Schema.Types.Mixed,logs:[String],startedAt:Date,finishedAt:Date,error:String},base));
+export const Workflow = model('Workflow',new Schema({name:String,trigger:String,condition:String,action:String,steps:[{type:String,label:String}],enabled:{type:Boolean,default:true},logs:[{status:String,message:String,createdAt:Date}]},base));
+export const Notification = model('Notification',new Schema({userId:{type:Schema.Types.ObjectId,ref:'User'},type:String,title:String,message:String,read:{type:Boolean,default:false},metadata:Schema.Types.Mixed},base));
+export const Memory = model('Memory',new Schema({scope:String,customerId:{type:Schema.Types.ObjectId,ref:'Customer'},agentId:String,key:String,value:String,tags:[String],source:String},base));
+export const CRMActivity = model('CRMActivity',new Schema({customerId:{type:Schema.Types.ObjectId,ref:'Customer'},type:String,title:String,body:String,metadata:Schema.Types.Mixed,createdBy:{type:Schema.Types.ObjectId,ref:'User'}},base));
